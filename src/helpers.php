@@ -28,5 +28,5 @@ function find_tour(string $slug): ?array
 
 function booking_total(array $tour, int $guests): int
 {
-    return $tour['price'] + $guests;
+    return $tour['price'] * $guests;
 }
