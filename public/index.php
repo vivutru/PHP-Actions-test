@@ -1,105 +1,141 @@
 <?php
 declare(strict_types=1);
-
-function e(string $value): string
-{
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
-
-// Handle the small form: PHP runs on the server, then sends back plain HTML.
-$name = trim((string) ($_POST['name'] ?? ''));
-
-$facts = [
-    'PHP version'      => PHP_VERSION,
-    'Web server'       => $_SERVER['SERVER_SOFTWARE'] ?? 'unknown',
-    'Operating system' => PHP_OS_FAMILY,
-    'Container name'   => gethostname() ?: 'unknown',
-    'Server time'      => date('Y-m-d H:i:s T'),
-];
+$title  = 'Blue Peak Coffee Tours | Blue Mountain tours from Kingston';
+$active = '';
+require __DIR__ . '/../src/header.php';
+$tours = tours();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PHP on Render: deployment test</title>
-  <style>
-    :root {
-      --paper: #f3f5f7;
-      --ink: #14202b;
-      --muted: #5b6b79;
-      --line: #d5dce2;
-      --accent: #0f766e;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 3rem 1.25rem;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      line-height: 1.5;
-    }
-    main { max-width: 38rem; margin: 0 auto; }
-    h1 { font-size: 2.5rem; line-height: 1.1; margin: 0 0 0.5rem; }
-    p.lead { color: var(--muted); margin: 0 0 2rem; }
-    h2 { font-size: 1.1rem; margin: 2.5rem 0 0.75rem; }
-    dl { margin: 0; border-top: 1px solid var(--line); }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 0.65rem 0;
-      border-bottom: 1px solid var(--line);
-    }
-    dt { color: var(--muted); }
-    dd { margin: 0; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
-    form { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    input[type="text"] {
-      flex: 1 1 12rem;
-      padding: 0.6rem 0.75rem;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      font: inherit;
-      background: #fff;
-    }
-    button {
-      padding: 0.6rem 1rem;
-      border: 0;
-      border-radius: 6px;
-      background: var(--accent);
-      color: #fff;
-      font: inherit;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-    .result { margin-top: 1rem; font-weight: 600; color: var(--accent); }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>This page is running PHP.</h1>
-    <p class="lead">If you can read this on a Render URL, your Dockerfile built and the container started.</p>
 
-    <h2>What the server reports</h2>
-    <dl>
-      <?php foreach ($facts as $label => $value): ?>
-        <div class="row">
-          <dt><?= e($label) ?></dt>
-          <dd><?= e((string) $value) ?></dd>
-        </div>
+<section class="hero">
+  <div class="wrap hero__content">
+    <p class="hero__kicker">Coffee and hiking tours from Kingston</p>
+    <h1>Sunrise at 7,000 feet, coffee in hand.</h1>
+    <p class="hero__lead">Climb above the clouds, meet the farmers behind the world-famous beans, and be back in Kingston by evening.</p>
+    <div class="hero__actions">
+      <a class="btn btn--sun" href="/book.php">Book a tour</a>
+      <a class="btn btn--ghost" href="#tours">See the tours</a>
+    </div>
+    <ul class="facts">
+      <li>Pickup in New Kingston</li>
+      <li>Eight guests, no more</li>
+      <li>Lunch and tastings included</li>
+    </ul>
+  </div>
+
+  <svg class="hero__art" viewBox="0 250 1440 350" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0" stop-color="#FFE27A" stop-opacity=".95"/>
+        <stop offset="1" stop-color="#FFE27A" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <g class="sun">
+      <circle cx="900" cy="340" r="200" fill="url(#glow)"/>
+      <circle cx="900" cy="340" r="72" fill="#FFD24A"/>
+    </g>
+    <g class="ridge r1"><path d="M0 420 L180 330 L320 400 L520 290 L700 410 L900 320 L1100 420 L1300 340 L1440 400 L1440 600 L0 600Z" fill="#1F7457"/></g>
+    <g class="ridge r1"><ellipse cx="420" cy="430" rx="360" ry="22" fill="#fff" opacity=".28"/><ellipse cx="1100" cy="448" rx="300" ry="18" fill="#fff" opacity=".22"/></g>
+    <g class="ridge r2"><path d="M0 485 L200 405 L380 475 L600 375 L820 485 L1040 405 L1240 495 L1440 430 L1440 600 L0 600Z" fill="#0B4F3A"/></g>
+    <g class="ridge r3"><path d="M0 545 L240 495 L460 545 L700 485 L960 555 L1200 505 L1440 550 L1440 600 L0 600Z" fill="#072B25"/></g>
+  </svg>
+</section>
+
+<section class="section" id="tours">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>Pick your mountain morning</h2>
+      <p>Three ways up. Each one ends with a proper cup of coffee.</p>
+    </div>
+    <div class="tours">
+      <?php foreach ($tours as $i => $tour): ?>
+        <article class="tour<?= $i === 0 ? ' tour--featured' : '' ?>">
+          <p class="tour__tag"><?= e($tour['tag']) ?></p>
+          <h3><?= e($tour['name']) ?></h3>
+          <p class="tour__blurb"><?= e($tour['blurb']) ?></p>
+          <dl class="tour__meta">
+            <div><dt>Length</dt><dd><?= e($tour['duration']) ?></dd></div>
+            <div><dt>Group</dt><dd><?= e($tour['group']) ?></dd></div>
+          </dl>
+          <div class="tour__foot">
+            <p class="tour__price"><?= e(jmd($tour['price'])) ?> <span>per guest</span></p>
+            <a class="btn <?= $i === 0 ? 'btn--sun' : 'btn--dark' ?>" href="/book.php?tour=<?= e($tour['slug']) ?>">Book this tour</a>
+          </div>
+        </article>
       <?php endforeach; ?>
-    </dl>
+    </div>
+  </div>
+</section>
 
-    <h2>Try a form</h2>
-    <form method="post">
-      <input type="text" name="name" placeholder="Your name" aria-label="Your name" value="<?= e($name) ?>">
-      <button type="submit">Say hello</button>
-    </form>
-    <?php if ($name !== ''): ?>
-      <p class="result">Hello, <?= e($name) ?>. PHP processed this on the server.</p>
-    <?php endif; ?>
-  </main>
-</body>
-</html>
+<section class="section section--tint" id="how">
+  <div class="wrap">
+    <div class="section__head">
+      <h2>From booking to first sip</h2>
+      <p>Three steps, and we handle the driving.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <span class="steps__n">1</span>
+        <h3>Choose a tour</h3>
+        <p>Pick the hike, the tasting, or the full day. Prices are per guest in Jamaican dollars.</p>
+      </li>
+      <li>
+        <span class="steps__n">2</span>
+        <h3>Pick a date</h3>
+        <p>Send your details through the booking form. You get a reference code straight away.</p>
+      </li>
+      <li>
+        <span class="steps__n">3</span>
+        <h3>Be in New Kingston</h3>
+        <p>Your guide collects you at the agreed time. Bring a light jacket, because it is cold up there.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap quote">
+    <blockquote>
+      <p>I've lived in Kingston all my life and never tasted coffee like that at the source. We were back home before dark.</p>
+      <footer>Shanice R., Half Way Tree</footer>
+    </blockquote>
+    <div class="quote__side">
+      <p class="quote__big">8</p>
+      <p>guests per tour at most, so you always get time with the farmer and the guide.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tint" id="faq">
+  <div class="wrap faq">
+    <div class="section__head">
+      <h2>Good to know</h2>
+    </div>
+    <div class="faq__list">
+      <details>
+        <summary>What should I bring?</summary>
+        <p>Closed shoes, a light jacket, water and sun protection. Mornings in the hills are cool, even in summer.</p>
+      </details>
+      <details>
+        <summary>Can I change my date?</summary>
+        <p>Yes. Contact us at least 48 hours before the tour and we will move you to another day at no cost.</p>
+      </details>
+      <details>
+        <summary>Is it suitable for children?</summary>
+        <p>The Farm to Cup Tasting suits all ages. The Sunrise Summit Hike is best for teenagers and adults who are comfortable walking uphill.</p>
+      </details>
+      <details>
+        <summary>What happens if it rains?</summary>
+        <p>We run in light rain. If conditions are unsafe, we move your tour to another date or refund you in full.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap cta__inner">
+    <h2>Your next sunrise is waiting.</h2>
+    <a class="btn btn--dark" href="/book.php">Book a tour</a>
+  </div>
+</section>
+
+<?php require __DIR__ . '/../src/footer.php'; ?>
