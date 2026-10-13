@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email'  => $old['email'],
             'date'   => $parsed->format('l, j F Y'),
             'guests' => $guests,
-            'total'  => $tour['price'] * $guests,
+            'total'  => booking_total($tour, $guests),
         ];
         $_SESSION['csrf'] = bin2hex(random_bytes(16));
     }

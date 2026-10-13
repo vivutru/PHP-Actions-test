@@ -1,0 +1,13 @@
+{
+    "name": "bluepeak/demo",
+    "description": "Demo PHP booking site used to show CI with GitHub Actions",
+    "require": {
+        "php": ">=8.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
